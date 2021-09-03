@@ -1,0 +1,43 @@
+output:
+  writer: indis.output.json_writer.JsonFileWriter
+  configuration:
+    directory: /tmp/director
+
+source:
+  demo_source:
+    name: demo
+    class: demo.source.NetworkSource
+    # This part describe how the data I read by the cmdb module
+    access:
+      # This is mandatory is the class that define the abstract methods that the reader implementation
+      # must implement. The module class should only know about this class.
+      reader_inf: demo.reader.Reader
+      # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
+      reader: demo.file_reader.FileReader
+
+processing:
+  # Add vars to all and specific object types
+  vars:
+    common:
+      env: Sthlm
+    hosts:
+      zone: xyz
+      test: XYZABC
+    services:
+      dc: dc1
+
+  groups:
+    hosts:
+      - all_host_group
+
+demo:
+
+  # Provider specific attribute used in the provider logic
+  nodefile: data/source_data.json
+
+
+logger:
+  # Path and name for the log file. Default is stdout
+  #logfile: /var/tmp/mender.log
+  # Log level. Default INFO
+  level: INFO

@@ -1,0 +1,102 @@
+[
+  {
+    "node": "www.opsdis.se",
+    "info": "Network service check",
+
+    "groups": [
+      "world-network",
+      "sweden-network",
+      "kalle"
+    ],
+    "contact_team": "network-demo",
+    "alias": "Opsdis",
+    "tags": {
+      "customer_id": "ID-74"
+    },
+    "geopos": {
+      "longitude": "18.080976",
+      "latitude": "59.309914"
+    },
+    "environment": "production",
+    "deployed": "yes",
+    "checks": {
+      "https": {
+        "check": "check_https"
+      },
+      "ping": {
+        "group": "edge",
+        "check": "check_ping",
+        "args": "20!30"
+      },
+      "httpsA": {
+        "check": "check_https"
+      },
+      "pingA": {
+        "group": "edge",
+        "check": "check_ping",
+        "args": "20!30"
+      }
+    },
+    "servicedependency": [
+      {
+        "https": [
+          {
+            "host": "www.opsdis.com",
+            "service": "ping"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "node": "www.sunet.se",
+    "info": "Network service check",
+    "parents" : [
+      "www.opsdis.com"
+    ],
+
+    "groups": [
+      "world-network",
+      "sweden-network"
+    ],
+    "contact_team": "network-demo",
+    "alias": "Sunet",
+    "tags": {
+      "customer_id": "ID-75"
+    },
+    "geopos": {
+      "longitude": "18.080976",
+      "latitude": "59.309914"
+    },
+    "environment": "production",
+    "deployed": "yes",
+    "checks": {
+      "https": {
+        "check": "check_https"
+      },
+      "ping": {
+        "group": "edge",
+        "check": "check_ping",
+        "args": "20!30"
+      },
+      "httpsA": {
+        "check": "check_https"
+      },
+      "pingA": {
+        "group": "edge",
+        "check": "check_ping",
+        "args": "20!30"
+      }
+    },
+    "servicedependency": [
+      {
+        "https": [
+          {
+            "host": "www.sunet.se",
+            "service": "ping"
+          }
+        ]
+      }
+    ]
+  }
+]

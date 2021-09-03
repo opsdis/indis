@@ -1,0 +1,105 @@
+# -*- coding: utf-8 -*-
+"""
+    Copyright (C) 2021  Opsdis AB
+
+    This file is part of indis - Icinga native directory importer service.
+
+    indis is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    indis is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with indis.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+
+import argparse
+import os
+import traceback
+#from cmdb2monitor.cmdbmo import create_monitor
+from distutils.util import strtobool
+from typing import Dict
+
+import indis.configuration as conf
+
+from indis.configuration import Configuration
+from indis.source_factory import Factory as source_factory
+from indis.output_factory import Factory as output_factory
+from indis.processing import processing
+
+from indis.logging import Log as log
+
+logger = log(__name__)
+
+
+def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
+
+
+    if not source_name and not os.getenv('INDIS_PROVIDER'):
+        raise Exception("provider name not set")
+    source_name = os.getenv('INDIS_PROVIDER', source_name)
+    dryrun = bool(strtobool(os.getenv('INDIS_DRYRUN', str(dryrun))))
+
+    try:
+        # Get the output class
+
+
+        output = output_factory(source_name, conf.Configuration)
+        logger.info_fmt({'name': output.output_name}, f"created output factory")
+        # Get the source provider class and
+        source = source_factory(source_name, conf.Configuration, source_reader)
+        logger.info_fmt({'name': source.source_module}, f"created source factory")
+        logger.info_fmt({'name': source.source_interface}, f"created source factory reader")
+
+        # Fetch transfer from source
+        transfer = source.fetch()
+        logger.info_fmt(transfer.stats(), "created objects")
+        # Process
+        processed = processing(transfer=transfer, config= conf.Configuration.get('processing'))
+        logger.info_fmt(processed, f"processed")
+        # Write output
+        output.write(transfer=transfer)
+        logger.info("output executed")
+        return transfer.stats()
+
+    except Exception as err:
+        raise err
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='indis - the icinga2 native director importer service')
+
+    parser.add_argument('-d', '--dryrun', action="store_true",
+                        dest="dry_run", help="Dry run no updates")
+
+    parser.add_argument('-f', '--configfile',
+                        dest="configfile", help="configuration file")
+
+    parser.add_argument('-s', '--source',
+                        dest="source_name", help="source provider to run")
+
+    args = parser.parse_args()
+
+    if args.configfile:
+        Configuration(args.configfile)
+    else:
+        Configuration()
+
+    if args.dry_run:
+        dry_run = True
+    else:
+        dry_run = False
+
+    try:
+        stats = execute(source_name=args.source_name, dryrun=dry_run)
+        print(stats)
+    except Exception as err:
+        traceback.print_exc()
+        print(err)
