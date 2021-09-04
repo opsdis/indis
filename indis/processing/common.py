@@ -26,6 +26,10 @@ from indis.provider.transfer import Transfer
 
 
 class Processing:
+    """
+    This class provide a base class for all processing classes that can be done on a Transfer object after it is
+    fetched and before it is written to a output provider.
+    """
     def __init__(self, transfer: Transfer, config: Configuration):
         self.transfer = transfer
         self.config = config

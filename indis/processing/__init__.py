@@ -22,14 +22,16 @@ from typing import Dict
 
 from indis.configuration import Configuration
 from indis.processing.common import Processing
+from indis.provider.transfer import Transfer
+# The import of the classes that is subclasses of Processing
 from indis.processing.groups import Groups
 from indis.processing.vars import Vars
-from indis.provider.transfer import Transfer
 
 
 def processing(transfer: Transfer, config: Configuration) -> Dict[str, int]:
     """
-    Find all processing "plugins" and process
+    Find all processing "plugins", instantiate them and and execute the objects process() method.
+    All classes to execute must be part of above imports
     Must been imported
     :param transfer:
     :param config:

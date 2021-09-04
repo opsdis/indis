@@ -30,15 +30,15 @@ class Vars(Processing):
         if pc and 'vars' in pc:
 
             for object_type in self.transfer.get_keys():
-                if 'common' in pc['vars']:
-                    for key, value in pc['vars']['common'].items():
+                if 'common' in pc.get('vars'):
+                    for key, value in pc.get('vars').get('common').items():
                         for object_name in self.transfer.hosts.keys():
                             self.transfer.hosts[object_name].vars[key] = value
                             count += 1
 
-                if object_type in pc['vars']:
+                if object_type in pc.get('vars'):
                     # For each object specific
-                    for key, value in pc['vars'][object_type].items():
+                    for key, value in pc.get('vars').get(object_type).items():
                         # for object_name in self.transfer.hosts.keys():
                         for object_name in self.transfer.get_by_name('hosts').keys():
                             # self.transfer.hosts[object_name].vars[key] = value

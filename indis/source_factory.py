@@ -80,7 +80,6 @@ class Factory:
             arg_list = inspect.getfullargspec(clazz.__init__).args
 
             if clazz and len(arg_list) == 2:
-                #print(self.configuration.get(self.configuration.get('source')[self.cmdb].get('name')))
                 return clazz(self.configuration.get(self.configuration.get('source')[self.cmdb].get('name')))
             else:
                 return None

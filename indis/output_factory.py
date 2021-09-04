@@ -19,11 +19,9 @@
 
 """
 
-import inspect
 import logging
 
 from indis.output.output_writer import OutputWriter
-from indis.provider.source import Source
 from indis.provider.transfer import Transfer
 
 cmdblogging = logging.getLogger(__name__)
@@ -36,7 +34,7 @@ class Factory:
         self.cmdb = cmdb
 
         self.output_name = configuration.get('output').get('writer')
-        if not self.output_name :
+        if not self.output_name:
             self.output_name = "indis.output.json_writer.JsonFileWriter"
 
         self.configuration = configuration.get('output').get('configuration')
@@ -58,8 +56,6 @@ class Factory:
 
         cmdblogging.info("Using writer factory {} ".format(self.writer_obj))
         self.writer_obj.write(transfer)
-
-
 
     @staticmethod
     def _get_module(name):

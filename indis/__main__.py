@@ -19,29 +19,24 @@
 
 """
 
-
 import argparse
 import os
 import traceback
-#from cmdb2monitor.cmdbmo import create_monitor
+# from cmdb2monitor.cmdbmo import create_monitor
 from distutils.util import strtobool
 from typing import Dict
 
 import indis.configuration as conf
-
 from indis.configuration import Configuration
-from indis.source_factory import Factory as source_factory
+from indis.logging import Log as log
 from indis.output_factory import Factory as output_factory
 from indis.processing import processing
-
-from indis.logging import Log as log
+from indis.source_factory import Factory as source_factory
 
 logger = log(__name__)
 
 
 def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
-
-
     if not source_name and not os.getenv('INDIS_PROVIDER'):
         raise Exception("provider name not set")
     source_name = os.getenv('INDIS_PROVIDER', source_name)
@@ -49,7 +44,6 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
 
     try:
         # Get the output class
-
 
         output = output_factory(source_name, conf.Configuration)
         logger.info_fmt({'name': output.output_name}, f"created output factory")
@@ -62,7 +56,7 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
         transfer = source.fetch()
         logger.info_fmt(transfer.stats(), "created objects")
         # Process
-        processed = processing(transfer=transfer, config= conf.Configuration.get('processing'))
+        processed = processing(transfer=transfer, config=conf.Configuration.get('processing'))
         logger.info_fmt(processed, f"processed")
         # Write output
         output.write(transfer=transfer)

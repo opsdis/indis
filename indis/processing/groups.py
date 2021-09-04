@@ -30,9 +30,9 @@ class Groups(Processing):
         if pc and 'groups' in pc:
 
             for object_type in self.transfer.get_keys():
-                if object_type in pc['groups']:
+                if object_type in pc.get('groups'):
                     # For each object specific
-                    for group in pc['groups'][object_type]:
+                    for group in pc.get('groups')[object_type]:
                         for object_name in self.transfer.hosts.keys():
                             self.transfer.hosts[object_name].groups.append(group)
                             count += 1

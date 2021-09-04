@@ -19,33 +19,32 @@
 
 """
 
-
 import datetime
 import logging
 import numbers
 import os
+import sys
 from typing import Any
 
-import sys
-from indis.configuration import Configuration as conf
-
 from dateutil.tz import tzutc
+
+from indis.configuration import Configuration as conf
 
 MESSAGE = 'message'
 
 
 class Iso8601UTCTimeFormatter(logging.Formatter):
 
-    def __init__(self, logFormat=None, timeFormat=None):
+    def __init__(self, log_format=None, time_format=None):
         """
         The purpose of this constructor is to set the timezone to UTC for later use.
 
-        :param logFormat: Log record formatting string.
-        :type logFormat: str
-        :param timeFormat: Time formatting string. You probably **DO NOT** want one.
-        :type timeFormat: str
+        :param log_format: Log record formatting string.
+        :type log_format: str
+        :param time_format: Time formatting string. You probably **DO NOT** want one.
+        :type time_format: str
         """
-        super(Iso8601UTCTimeFormatter, self).__init__(logFormat, timeFormat)
+        super(Iso8601UTCTimeFormatter, self).__init__(log_format, time_format)
 
         self._TIMEZONE_UTC = tzutc()
 
@@ -86,7 +85,6 @@ class Log:
     def info_fmt(self, log_kv: dict, message: str = None):
         fmt = self._create_fmt(log_kv, message)
         self.logger.info(fmt)
-
 
     def warn_fmt(self, log_kv: dict, message: str = None):
         fmt = self._create_fmt(log_kv, message)
@@ -132,7 +130,7 @@ class Log:
 
     def infotimer(self, system, method, path, time, num_of_calls=None, status=None):
         self.info_fmt({'system': system, 'method': method, 'path': path, 'status': status, 'response_time': time,
-                           'calls': num_of_calls})
+                       'calls': num_of_calls})
 
     def configure_logger(self, name):
         formatter = Iso8601UTCTimeFormatter('timestamp=%(asctime)s level=%(levelname)s %(message)s')
