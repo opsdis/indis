@@ -19,29 +19,21 @@
 
 """
 
-from indis.processing.common import Processing
+from indis.processor.common import Processing
 
 
-class Vars(Processing):
+class Groups(Processing):
 
     def process(self) -> int:
         pc = self.config
         count = 0
-        if pc and 'vars' in pc:
+        if pc and 'groups' in pc:
 
             for object_type in self.transfer.get_keys():
-                if 'common' in pc.get('vars'):
-                    for key, value in pc.get('vars').get('common').items():
-                        for object_name in self.transfer.hosts.keys():
-                            self.transfer.hosts[object_name].vars[key] = value
-                            count += 1
-
-                if object_type in pc.get('vars'):
+                if object_type in pc.get('groups'):
                     # For each object specific
-                    for key, value in pc.get('vars').get(object_type).items():
-                        # for object_name in self.transfer.hosts.keys():
-                        for object_name in self.transfer.get_by_name('hosts').keys():
-                            # self.transfer.hosts[object_name].vars[key] = value
-                            self.transfer.get_by_name('hosts')[object_name].vars[key] = value
+                    for group in pc.get('groups')[object_type]:
+                        for object_name in self.transfer.hosts.keys():
+                            self.transfer.hosts[object_name].groups.append(group)
                             count += 1
         return count

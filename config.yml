@@ -15,7 +15,7 @@ source:
       # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
       reader: demo.file_reader.FileReader
 
-processing:
+processor:
   # Add vars to all and specific object types
   vars:
     common:

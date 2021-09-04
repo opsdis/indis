@@ -30,7 +30,7 @@ import indis.configuration as conf
 from indis.configuration import Configuration
 from indis.logging import Log as log
 from indis.output_factory import Factory as output_factory
-from indis.processing import processing
+from indis.processor import processing
 from indis.source_factory import Factory as source_factory
 
 logger = log(__name__)
@@ -56,7 +56,7 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
         transfer = source.fetch()
         logger.info_fmt(transfer.stats(), "created objects")
         # Process
-        processed = processing(transfer=transfer, config=conf.Configuration.get('processing'))
+        processed = processing(transfer=transfer, config=conf.Configuration.get('processor'))
         logger.info_fmt(processed, f"processed")
         # Write output
         output.write(transfer=transfer)
