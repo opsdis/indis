@@ -23,18 +23,27 @@ import rules, sync rules, apply rules etc, just need to operate on the "native" 
 Instead of writing different rules and configuration depending on the structure of the source, Indis manage that 
 separation and abstraction.
 
-That's why we call it "Icinga native director import service".
+**That's why we call it "Icinga native director import service".**
+
+# Use Icinga2 Director DSL
+
+One key aspect with Icinga2 Director is to use the Director DSL to provide logic on howto connect objects together.
+Typical the DSL can be used to connect services to hosts. Instead of create unique services for a host, use service 
+templates and apply these based on host attributes like variables, hostgroups etc.
 
 # Get started
+
 For more hands on and get started check out the `config.yml` and the `demo` provider.
 
     python -m indis -f config.yml -s demo_source
 
 
 # Output plugins 
+
 Two output plugins are available, a json file plugin and a Icinga2 director API plugin.
 
 ## The json file output plugin
+
 The json file output plugin can be used with fileshipper.
 
 Check out the config:
@@ -47,6 +56,7 @@ output:
 The output will be written to the `directory`, with one file for each object typ.
 
 ## The Icinga2 director API output plugin
+
 The output plugin will create and update objects using the Icinga2 director REST API.
 
 > There is currently no support for DELETE and since the Director API is not managed by Import and Sync there is 
@@ -69,5 +79,7 @@ The user must be an existing icinga2 web user with credentials for Director API.
 
 
 # Source provider
+
 TODO
-> If you know Mender, you will recognize the structure
+
+> If you know Mender, you will recognize the programming structure of Indis providers.
