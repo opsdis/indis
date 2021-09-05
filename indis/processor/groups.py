@@ -20,6 +20,7 @@
 """
 
 from indis.processor.common import Processing
+from indis.model.group import Group
 
 
 class Groups(Processing):
@@ -29,11 +30,18 @@ class Groups(Processing):
         count = 0
         if pc and 'groups' in pc:
 
+            create_hostgroups = set()
             for object_type in self.transfer.get_keys():
                 if object_type in pc.get('groups'):
                     # For each object specific
                     for group in pc.get('groups')[object_type]:
                         for object_name in self.transfer.hosts.keys():
                             self.transfer.hosts[object_name].groups.append(group)
+                            create_hostgroups.add(Group(name=group))
                             count += 1
+
+            # Add hostgroups that is added since it may not exists
+            for host_group in create_hostgroups:
+                self.transfer.hostgroups[host_group.object_name] = host_group
+
         return count
