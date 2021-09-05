@@ -1,7 +1,14 @@
 output:
-  writer: indis.output.json_writer.JsonFileWriter
+  #writer: indis.output.json_writer.JsonFileWriter
+  #configuration:
+  #  directory: /tmp/director
+
+  writer: indis.output.api_writer.APIWriter
   configuration:
-    directory: /tmp/director
+    url: http://172.25.1.64/icingaweb2/director
+    user: icingaadmin
+    password: icinga
+
 
 source:
   demo_source:
@@ -21,8 +28,7 @@ processor:
     common:
       env: Sthlm
     hosts:
-      zone: xyz
-      test: XYZABC
+      template: base_host
     services:
       dc: dc1
 
@@ -40,4 +46,4 @@ logger:
   # Path and name for the log file. Default is stdout
   #logfile: /var/tmp/mender.log
   # Log level. Default INFO
-  level: INFO
+  level: DEBUG
