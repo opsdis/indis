@@ -56,7 +56,7 @@ class NetworkSource(Source):
                 if isinstance(host_dict['tags'], dict):
                     for key, value in host_dict['tags'].items():
                         host.vars[key] = value
-
+            host.vars['web'] = "true"
             host.notes_url = f"https://{host_dict['node'].lower().strip()}"
 
             if 'groups' in host_dict:
@@ -65,6 +65,8 @@ class NetworkSource(Source):
                     hostgroup = Group(name=group)
                     hostgroup.display_name = f"HOSTGROUP {group}"
                     transfer.hostgroups[hostgroup.object_name] = hostgroup
+
+            host.imports.append('base_host')
             transfer.hosts[host.object_name] = host
 
         return transfer
