@@ -20,13 +20,14 @@
 """
 
 from typing import List, Dict, Any
+from indis.model.common import Common, to_json, to_dict
 
-
-class BasicAttributes:
+class BasicAttributes(Common):
     __initialized = False
 
     def __init__(self, name: str):
-        self.object_name = name
+        super().__init__(name=name)
+        #self.object_name = name
         # String	Optional. A short description of the service.
         self.display_name = ''
         # Array of object names	Optional. The service groups this service belongs to.
@@ -82,7 +83,8 @@ class BasicAttributes:
         # String	Optional. Icon image description for the service. Used by external interface only.
         self.icon_image_alt: str = ''
 
-        self._ind = {'object_name'}
+        self.imports: List[str] = list()
+        self._ind = {'object_name', 'object_type'}
         self.__initialized = True
 
     def __setattr__(self, name, value):

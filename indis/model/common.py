@@ -26,6 +26,10 @@ from typing import Dict, Any
 
 class Common:
 
+    def __init__(self, name):
+        self.object_name = name
+        self.object_type = 'object'
+
     @abstractmethod
     def to_json(self) -> str:
         pass

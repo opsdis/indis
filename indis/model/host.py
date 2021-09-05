@@ -23,7 +23,7 @@ from indis.model.basic_attributes import BasicAttributes
 from indis.model.common import Common, to_json, to_dict
 
 
-class Host(Common, BasicAttributes):
+class Host(BasicAttributes):
     __initialized = False
 
     def __init__(self, name):

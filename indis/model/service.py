@@ -24,7 +24,7 @@ from indis.model.basic_attributes import BasicAttributes
 from indis.model.common import Common, to_json, to_dict
 
 
-class Service(Common, BasicAttributes):
+class Service(BasicAttributes):
     __initialized = False
 
     def __init__(self, name: str, host_name: str):

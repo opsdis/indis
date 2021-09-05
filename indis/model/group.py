@@ -28,13 +28,14 @@ class Group(Common):
     __initialized = False
 
     def __init__(self, name: str):
-        self.object_name = name
+        super().__init__(name=name)
+        #self.object_name = name
         # String	Optional. A short description of the host/service group.
         self.display_name = ''
         # Array of object names	Optional. An array of nested group names.
         self.groups: List[str] = list()
 
-        self._ind = {'object_name'}
+        self._ind = {'object_name', 'object_type'}
         self.__initialized = True
 
     def __setattr__(self, name, value):

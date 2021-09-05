@@ -26,7 +26,8 @@ class Dependency(Common):
     __initialized = False
 
     def __init__(self, name: str, parent_host: str, child_host: str):
-        self.object_name = name
+        super().__init__(name=name)
+        #self.object_name = name
         # Object name	Required. The parent host.
         self.parent_host_name = parent_host
         # Object name	Optional. The parent service. If omitted, this dependency object is treated as host dependency.
@@ -46,7 +47,7 @@ class Dependency(Common):
         # Array	Optional. A list of state filters when this dependency should be OK. Defaults to [ OK, Warning ] for services and [ Up ] for hosts.
         self.states = list()
 
-        self._ind = {'object_name', 'parent_host_name', 'child_host_name'}
+        self._ind = {'object_name', 'object_type', 'parent_host_name', 'child_host_name'}
         self.__initialized = True
 
     def __setattr__(self, name, value):

@@ -31,8 +31,9 @@ class Command(Common):
     __initialized = False
 
     def __init__(self, name: str):
-        self.object_name = name
-        # Array	Required. The command. This can either be an array of individual command arguments. Alternatively a
+        super().__init__(name=name)
+        #self.object_name = name
+        # Array	Required. The command.: This can either be an array of individual command arguments. Alternatively a
         # string can be specified in which case the shell interpreter (usually /bin/sh) takes care of parsing the
         # command.
         # When using the “arguments” attribute this must be an array. Can be specified as function for advanced implementations.
@@ -46,7 +47,7 @@ class Command(Common):
         # Dictionary	Optional. A dictionary of command arguments.
         self.arguments: Dict[str, str] = dict()
 
-        self._ind = {'object_name'}
+        self._ind = {'object_name', 'object_type'}
         self.__initialized = True
 
     def __setattr__(self, name, value):

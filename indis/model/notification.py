@@ -28,7 +28,8 @@ class Notification(Common):
     __initialized = False
 
     def __init__(self, name: str):
-        self.object_name: str = name
+        super().__init__(name=name)
+        #self.object_name: str = name
         # Object name	Required. The name of the host this notification belongs to.
         self.host_name: str = ''
         # Object name	Optional. The short name of the service this notification belongs to. If omitted, this notification object is treated as host notification.
@@ -54,7 +55,7 @@ class Notification(Common):
         # Array	Optional. A list of state filters when this notification should be triggered. By default everything is matched. Note that the states filter is ignored for notifications of type Acknowledgement!
         self.states: List[str] = list()
 
-        self._ind = {'object_name'}
+        self._ind = {'object_name', 'object_type'}
         self.__initialized = True
 
     def __setattr__(self, name, value):
