@@ -20,6 +20,7 @@
 """
 
 import datetime
+import json
 import logging
 import numbers
 import os
@@ -97,6 +98,15 @@ class Log:
     def debug_fmt(self, log_kv: dict, message: str = None):
         fmt = self._create_fmt(log_kv, message)
         self.logger.debug(fmt)
+
+    def dump_command(self, command, status, response_text, url, body=None):
+        self.info_fmt(
+            {'operation': 'dump', 'command': command, 'status': status, 'response_text': response_text, 'url': url,
+             'body': json.dumps(body)})
+
+    def info_timer(self, method, path, time, num_of_calls=None, status=None, remote_address: str = None):
+        self.info_fmt({'system': 'cmdb', 'address': remote_address, 'method': method, 'path': path, 'status': status, 'response_time': time,
+                       'calls': num_of_calls})
 
     def _create_fmt(self, log_kv, message):
         if message:
