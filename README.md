@@ -1,6 +1,8 @@
 indis - Icinga native director import service
 ----------------------------------------------
 
+> This project is currently in alpha
+
 # Overview 
 
 Indis is a configuration tool for Icinga2 and integrates with the Icinga2 module Director. 
@@ -16,17 +18,24 @@ A processor can typical be logic that enrich or transform the icinga objects in 
 The final step is to generate the output, the output data that should be processed by Icinga2 Director.
 
 The major benefit using Indis compared to other integrations like a custom json, a sql table etc, is that all
-output from Indis follow the Icinga2 object naming. This means that all Director configuration, like import rules, 
-sync rules, apply rules etc, just need to operate on the "native" icinga2 object model. Instead of writing different 
-rules and configuration depending on the structure of the source, Indis manage that separation and abstraction. 
+output from Indis follow the Icinga2 objects structure and naming. This means that all Director configuration, like 
+import rules, sync rules, apply rules etc, just need to operate on the "native" icinga2 object model. 
+Instead of writing different rules and configuration depending on the structure of the source, Indis manage that 
+separation and abstraction.
+
 That's why we call it "Icinga native director import service".
 
+# Get started
 For more hands on and get started check out the `config.yml` and the `demo` provider.
 
     python -m indis -f config.yml -s demo_source
 
-# Output 
-Currently, only a json output to file is provided. This can be used with fileshipper.
+
+# Output plugins 
+Two output plugins are available, a json file plugin and a Icinga2 director API plugin.
+
+## The json file output plugin
+The json file output plugin can be used with fileshipper.
 
 Check out the config:
 ```yaml
@@ -35,4 +44,30 @@ output:
   configuration:
     directory: /tmp/director
 ```
-The output will be written to the `directory`, with one file for each object typ. 
+The output will be written to the `directory`, with one file for each object typ.
+
+## The Icinga2 director API output plugin
+The output plugin will create and update objects using the Icinga2 director REST API.
+
+> There is currently no support for DELETE and since the Director API is not managed by Import and Sync there is 
+> now way from Icinga2 Director to manage the life cycle.
+> The way this might be done is a pre-step, reading hosts from Icinga2 REST API to list existing hosts based on som 
+> marker like hostgroup or host variable. The other options is to keep some cache from previous executions.
+
+Configuration for the output plugin is:
+```yaml
+output:
+  
+  writer: indis.output.api_writer.APIWriter
+  configuration:
+    url: http://localhost/icingaweb2/director
+    user: user
+    password: password
+```
+The user must be an existing icinga2 web user with credentials for Director API.
+
+
+
+# Source provider
+TODO
+> If you know Mender, you will recognize the structure
