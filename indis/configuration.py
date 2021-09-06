@@ -53,7 +53,7 @@ class Configuration(object, metaclass=Singleton):
                     self.conf = yaml.load(yml_file, Loader=yaml.FullLoader)
             else:
                 with open(configfile, 'r', encoding='utf-8') as yml_file:
-                    self.conf = yaml.load(yml_file)
+                    self.conf = yaml.load(yml_file, Loader=yaml.FullLoader)
         except FileNotFoundError as err:
             raise err
 
