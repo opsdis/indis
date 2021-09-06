@@ -19,34 +19,101 @@
 
 """
 import time
-from typing import Dict, List
+from typing import Dict, Set
 
 import requests
 
+from indis.cache import Cache
+from indis.configuration import Configuration
 from indis.logging import Log as log
 from indis.output.output_writer import OutputWriter
 from indis.provider.transfer import Transfer
 
+UNKNOWN = 'unknown'
+DELETED = 'deleted'
+NOTMODIFIED = 'notmodified'
+UPDATED = 'updated'
+CREATED = 'created'
 logger = log(__name__)
+
+
+def map_write_status(status):
+    if status == 201:
+        return CREATED
+    if status == 200:
+        return UPDATED
+    if status == 304:
+        return NOTMODIFIED
+    return UNKNOWN
+
+
+def map_delete_status(status):
+    if status == 200:
+        return DELETED
+    if status == 304:
+        return NOTMODIFIED
+    return UNKNOWN
 
 
 class APIWriter(OutputWriter):
 
-    def write(self, transfer: Transfer):
+    def __init__(self, config: Configuration):
+        super().__init__(config)
+        self.cache = None
+        self.stats_create = {}
+        self.stats_delete = {}
         self.con = Connection(self.config)
-        self.transfer = transfer
-        # Must be written in a order
-        stats = {}
-        stats.update(self.write_object('hostgroups'))
-        stats.update(self.write_object('hosts'))
-        logger.debug_fmt(log_kv=stats, message="icinga director api")
+        self.transfer: Transfer = Transfer()
 
-    def write_object(self, object_type) -> Dict[str, List[Dict[str, int]]]:
-        stats = {object_type: list()}
+    def write(self, transfer: Transfer, cache: Cache):
+
+        self.transfer = transfer
+        # Cache the Transfer
+        self.cache = cache
+        # Must be written in a order
+        for object_type in transfer.dependency_order():
+            if transfer.__dict__[object_type]:
+                # the transfer object is not empty
+                self.stats_create.update(self._write_object(object_type=object_type))
+
+        logger.debug_fmt(log_kv=self.stats_create, message="api create/update operations")
+
+        # Handling delete objects
+        for object_type in transfer.__dict__.keys():
+            deleted = self.cache.deleted(object_type=object_type)
+
+            self.stats_delete.update(self._delete_object(object_type=object_type, objects=deleted))
+
+        logger.debug_fmt(log_kv=self.stats_delete, message="api delete operations")
+
+    def write_stats(self) -> Dict[str, Dict[str, int]]:
+        stats = dict()
+        for object_type in self.transfer.__dict__.keys():
+
+            stats[object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0}
+            if object_type in self.stats_create:
+                for key, value in self.stats_create[object_type].items():
+                    stats[object_type][value] += 1
+                for key, value in self.stats_delete[object_type].items():
+                    stats[object_type][value] += 1
+        return stats
+
+    def _write_object(self, object_type: str) -> Dict[str, Dict[str, str]]:
+        stats = {object_type: dict()}
 
         for key, value in self.transfer.get_copy()[object_type].items():
-            status = self.con.create_object(object_name=value.object_name, object_type=object_type, body=value.to_json())
-            stats[object_type].append({value.object_name: status})
+            status = self.con.create_object(object_name=value.object_name, object_type=object_type,
+                                            body=value.to_json())
+
+            stats[object_type][value.object_name] = map_write_status(status)
+        return stats
+
+    def _delete_object(self, object_type: str, objects: Set[str]) -> Dict[str, Dict[str, str]]:
+        stats = {object_type: dict()}
+
+        for object_name in objects:
+            status = self.con.delete_object(object_name=object_name, object_type=object_type)
+            stats[object_type][object_name] = map_delete_status(status)
         return stats
 
 
@@ -63,11 +130,7 @@ class Connection:
 
     def create_object(self, object_name: str, object_type: str, body: str) -> int:
 
-        type = ''
-        if object_type == 'hosts':
-            type = 'host'
-        if object_type == 'hostgroups':
-            type = 'hostgroup'
+        type = self.get_url(object_type)
 
         no_error = False
         start_time = time.time()
@@ -84,10 +147,10 @@ class Connection:
             if r.status_code == 404:
                 # If the object do not exist do POST
                 r = requests.post(f"{self.url}/{type}",
-                                 data=body,
-                                 auth=self.auth,
-                                 headers=self.headers,
-                                 verify=self.verify)
+                                  data=body,
+                                  auth=self.auth,
+                                  headers=self.headers,
+                                  verify=self.verify)
 
                 status = r.status_code
                 no_error = True
@@ -113,3 +176,54 @@ class Connection:
             raise err
         finally:
             logger.info_timer('put', object_type, time.time() - start_time, 1, status)
+
+    def delete_object(self, object_name: str, object_type: str) -> int:
+        type = self.get_url(object_type)
+
+        no_error = False
+        start_time = time.time()
+        status = None
+
+        try:
+
+            r = requests.delete(f"{self.url}/{type}?name={object_name}",
+                                auth=self.auth,
+                                headers=self.headers,
+                                verify=self.verify)
+
+            if r.status_code == 200 or r.status_code == 201:
+                status = r.status_code
+
+            if not no_error:
+                r.raise_for_status()
+
+            return r.status_code
+
+        except requests.exceptions.HTTPError as err:
+            logger.warn("delete failed on: {} err {}".format(object_type, err))
+            if r is None:
+                raise err
+
+            return r.status_code
+
+        except requests.exceptions.RequestException as err:
+            logger.error("delete failed on: {} err {}".format(self.url, err))
+            raise err
+        finally:
+            logger.info_timer('delete', object_type, time.time() - start_time, 1, status)
+
+    def get_url(self, object_type):
+        type = ''
+        if object_type == 'hosts':
+            type = 'host'
+        if object_type == 'hostgroups':
+            type = 'hostgroup'
+        if object_type == 'services':
+            type = 'service'
+        if object_type == 'servicegroups':
+            type = 'servicegroup'
+        if object_type == 'commands':
+            type = 'command'
+        if object_type == 'notifications':
+            type = 'notification'
+        return type
