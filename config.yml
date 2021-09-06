@@ -37,6 +37,7 @@ processor:
       - all_host_group
 
 cache:
+  # Use cache to enable life cycle on objects. A must to understand deletes
   redis:
     host: localhost
     # a key prefix for all keys. One for each provider integrations
