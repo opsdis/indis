@@ -24,7 +24,7 @@ import os
 import traceback
 # from cmdb2monitor.cmdbmo import create_monitor
 from distutils.util import strtobool
-from typing import Dict
+from typing import Dict, Tuple
 
 import indis.configuration as conf
 from indis.configuration import Configuration
@@ -32,11 +32,12 @@ from indis.logging import Log as log
 from indis.output_factory import Factory as output_factory
 from indis.processor import processing
 from indis.source_factory import Factory as source_factory
+from indis.cache import factory as cache_factory
 
 logger = log(__name__)
 
 
-def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
+def execute(source_name, dryrun: bool, source_reader=None) -> Tuple[Dict[str, int], Dict[str, Dict[str, int]]]:
     if not source_name and not os.getenv('INDIS_PROVIDER'):
         raise Exception("provider name not set")
     source_name = os.getenv('INDIS_PROVIDER', source_name)
@@ -44,7 +45,6 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
 
     try:
         # Get the output class
-
         output = output_factory(source_name, conf.Configuration)
         logger.info_fmt({'name': output.output_name}, f"created output factory")
         # Get the source provider class and
@@ -58,10 +58,14 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Dict[str, int]:
         # Process
         processed = processing(transfer=transfer, config=conf.Configuration.get('processor'))
         logger.info_fmt(processed, f"processed")
+
+        # Get cache
+        cache_imp = cache_factory(config=conf.Configuration.get('cache'), transfer=transfer)
+
         # Write output
-        output.write(transfer=transfer)
+        output.write(transfer=transfer, cache=cache_imp)
         logger.info("output executed")
-        return transfer.stats()
+        return transfer.stats(), output.write_stats()
 
     except Exception as err:
         raise err
@@ -92,8 +96,9 @@ if __name__ == "__main__":
         dry_run = False
 
     try:
-        stats = execute(source_name=args.source_name, dryrun=dry_run)
-        print(stats)
+        transfer_stats, ops_stat = execute(source_name=args.source_name, dryrun=dry_run)
+        print(transfer_stats)
+        print(ops_stat)
     except Exception as err:
         traceback.print_exc()
         print(err)
