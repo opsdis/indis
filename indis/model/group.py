@@ -29,7 +29,7 @@ class Group(Common):
 
     def __init__(self, name: str):
         super().__init__(name=name)
-        #self.object_name = name
+
         # String	Optional. A short description of the host/service group.
         self.display_name = ''
         # Array of object names	Optional. An array of nested group names.
