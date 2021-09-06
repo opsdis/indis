@@ -104,9 +104,8 @@ class Log:
             {'operation': 'dump', 'command': command, 'status': status, 'response_text': response_text, 'url': url,
              'body': json.dumps(body)})
 
-    def info_timer(self, method, path, time, num_of_calls=None, status=None, remote_address: str = None):
-        self.info_fmt({'system': 'cmdb', 'address': remote_address, 'method': method, 'path': path, 'status': status, 'response_time': time,
-                       'calls': num_of_calls})
+    def info_timer(self, method, path, object_name, time, num_of_calls=None, status=None, remote_address: str = None):
+        self.info_fmt({'system': 'icinga2', 'address': remote_address, 'method': method, 'path': path, 'object': object_name, 'status': status, 'response_time': time})
 
     def _create_fmt(self, log_kv, message):
         if message:

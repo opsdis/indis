@@ -175,7 +175,7 @@ class Connection:
             logger.error("put failed on: {} err {}".format(self.url, err))
             raise err
         finally:
-            logger.info_timer('put', object_type, time.time() - start_time, 1, status)
+            logger.info_timer('put', object_type, object_name, time.time() - start_time, status)
 
     def delete_object(self, object_name: str, object_type: str) -> int:
         type = self.get_url(object_type)
@@ -210,7 +210,7 @@ class Connection:
             logger.error("delete failed on: {} err {}".format(self.url, err))
             raise err
         finally:
-            logger.info_timer('delete', object_type, time.time() - start_time, 1, status)
+            logger.info_timer('delete', object_type, object_name, time.time() - start_time, status)
 
     def get_url(self, object_type):
         type = ''
