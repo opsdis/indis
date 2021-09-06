@@ -1,7 +1,7 @@
 output:
-  #writer: indis.output.json_writer.JsonFileWriter
-  #configuration:
-  #  directory: /tmp/director
+#  writer: indis.output.json_writer.JsonFileWriter
+#  configuration:
+#    directory: /tmp/director
 
   writer: indis.output.api_writer.APIWriter
   configuration:
@@ -35,6 +35,12 @@ processor:
   groups:
     hosts:
       - all_host_group
+
+cache:
+  redis:
+    host: localhost
+    # a key prefix for all keys. One for each provider integrations
+    prefix: "demo:"
 
 demo:
 
