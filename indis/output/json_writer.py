@@ -18,21 +18,30 @@
     along with indis.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+from typing import Dict
 
+from indis.cache import Cache
+from indis.configuration import Configuration
 from indis.output.output_writer import OutputWriter
 from indis.provider.transfer import Transfer
 
 
 class JsonFileWriter(OutputWriter):
 
-    def write(self, transfer: Transfer):
+    def __init__(self, config: Configuration):
+        super().__init__(config)
+        self.stats = dict()
+
+    def write(self, transfer: Transfer, cache: Cache):
 
         for object_type in transfer.get_keys():
             if self.config and self.config.get('directory'):
                 with open(self.config.get('directory') + "/" + object_type + '.json', 'w') as fd:
                     fd.write('[')
                     sep = ''
+                    self.stats[object_type] = {'created': 0}
                     for key, value in transfer.get_copy()[object_type].items():
+                        self.stats[object_type]['created'] += 1
                         fd.write(sep)
                         fd.write(value.to_json())
                         sep = ','
@@ -40,8 +49,13 @@ class JsonFileWriter(OutputWriter):
             else:
                 print('[', end='')
                 sep = ''
+                self.stats[object_type] = {'created': 0}
                 for key, value in transfer.get_copy()[object_type].items():
+                    self.stats[object_type]['created'] += 1
                     print(sep, end='')
                     print(value.to_json(), end='')
                     sep = ','
                 print(']', end='')
+
+    def write_stats(self) -> Dict[str, Dict[str, int]]:
+        return self.stats
