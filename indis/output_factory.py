@@ -20,7 +20,9 @@
 """
 
 import logging
+from typing import Dict
 
+from indis.cache import Cache
 from indis.output.output_writer import OutputWriter
 from indis.provider.transfer import Transfer
 
@@ -46,7 +48,7 @@ class Factory:
         if not isinstance(self.writer_obj, OutputWriter):
             raise AttributeError("The writer object is not according to interface")
 
-    def write(self, transfer: Transfer):
+    def write(self, transfer: Transfer, cache: Cache):
         """
         The method return a method, fetch, that is specific for the CMDB provider.
         The fetch method that is return must by itself return a dictionary of Host objects with the key of the host name
@@ -55,7 +57,10 @@ class Factory:
         """
 
         cmdblogging.info("Using writer factory {} ".format(self.writer_obj))
-        self.writer_obj.write(transfer)
+        self.writer_obj.write(transfer, cache)
+
+    def write_stats(self) -> Dict[str, Dict[str, int]]:
+        return self.writer_obj.write_stats()
 
     @staticmethod
     def _get_module(name):
