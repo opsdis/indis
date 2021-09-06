@@ -83,3 +83,6 @@ The user must be an existing icinga2 web user with credentials for Director API.
 TODO
 
 > If you know Mender, you will recognize the programming structure of Indis providers.
+
+# Cache 
+TODO
