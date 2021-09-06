@@ -20,7 +20,9 @@
 """
 
 from abc import abstractmethod
+from typing import Dict
 
+from indis.cache import Cache
 from indis.configuration import Configuration
 from indis.provider.transfer import Transfer
 
@@ -30,5 +32,11 @@ class OutputWriter:
         self.config = config
 
     @abstractmethod
-    def write(self, transfer: Transfer):
+    def write(self, transfer: Transfer, cache: Cache):
         pass
+
+    @abstractmethod
+    def write_stats(self) -> Dict[str, Dict[str, int]]:
+        pass
+
+
