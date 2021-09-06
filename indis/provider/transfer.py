@@ -85,3 +85,7 @@ class Transfer:
         for key, value in self.__dict__.items():
             stats[key] = len(value)
         return stats
+
+    def dependency_order(self):
+        return ['hostgroups', 'commands', 'hosts', 'servicegroups', 'services', 'service_dependencies',
+                    'host_dependencies', 'notifications']
