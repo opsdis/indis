@@ -27,9 +27,9 @@ from indis.model.common import Common, to_json, to_dict
 class Notification(Common):
     __initialized = False
 
-    def __init__(self, name: str):
-        super().__init__(name=name)
-        #self.object_name: str = name
+    def __init__(self, name: str, object_type: str = 'object'):
+        super().__init__(name=name, object_type=object_type)
+        # self.object_name: str = name
         # Object name	Required. The name of the host this notification belongs to.
         self.host_name: str = ''
         # Object name	Optional. The short name of the service this notification belongs to. If omitted, this notification object is treated as host notification.

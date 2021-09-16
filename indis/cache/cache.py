@@ -19,11 +19,11 @@
 
 """
 
+import hashlib
 from abc import abstractmethod
 from typing import Set, Dict, Any
-import redis
-import hashlib
 
+import redis
 
 from indis.configuration import Configuration
 from indis.provider.transfer import Transfer
@@ -78,13 +78,13 @@ class NoCache(Cache):
 
 class RedisCache(Cache):
 
-    def __init__(self, transfer: Transfer, config: Configuration):
+    def __init__(self, prefix: str, transfer: Transfer, config: Configuration):
         super().__init__(transfer=transfer)
         self.redis_host = 'localhost' if config.get('host') is None else config.get('host')
         self.redis_port = '6379' if config.get('port') is None else config.get('port')
         self.redis_db = '0' if config.get('db') is None else config.get('db')
         self.redis_auth = None if config.get('auth') is None else config.get('auth')
-        self.key_prefix = '' if config.get('prefix') is None else config.get('prefix')
+        self.key_prefix = f"{prefix}:"
         self.con = self._get_cache_connection()
 
         self.transfer_existing: Dict[str, Dict[str, Any]] = dict()
@@ -103,7 +103,7 @@ class RedisCache(Cache):
                 pipe.sadd(f"{self.key_prefix}{object_type}", key)
                 sha = hashlib.sha256(obj.to_json().encode())
                 self.transfer_current[object_type][key] = sha.hexdigest()
-                pipe.set(f"{self.key_prefix}{object_type}:{key}", sha.hexdigest() )
+                pipe.set(f"{self.key_prefix}{object_type}:{key}", sha.hexdigest())
         pipe.execute()
 
     def rollback(self):

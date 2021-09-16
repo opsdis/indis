@@ -36,7 +36,5 @@ class OutputWriter:
         pass
 
     @abstractmethod
-    def write_stats(self) -> Dict[str, Dict[str, int]]:
+    def write_stats(self) -> Dict[str, Dict[str, Dict[str, int]]]:
         pass
-
-

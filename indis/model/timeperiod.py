@@ -19,12 +19,12 @@
 
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from indis.model.common import Common, to_json, to_dict
 
 
-class Command(Common):
+class TimePeriod(Common):
     """
     Command is the same for CheckCommand, NotificationCommand and EventCommand
     """
@@ -32,20 +32,16 @@ class Command(Common):
 
     def __init__(self, name: str, object_type: str = 'object'):
         super().__init__(name=name, object_type=object_type)
-        # self.object_name = name
-        # Array	Required. The command.: This can either be an array of individual command arguments. Alternatively a
-        # string can be specified in which case the shell interpreter (usually /bin/sh) takes care of parsing the
-        # command.
-        # When using the “arguments” attribute this must be an array. Can be specified as function for advanced implementations.
-        self.command: List[str] = list()
-        # Dictionary	Optional. A dictionary of macros which should be exported as environment variables prior to executing the command.
-        self.env: Dict[str, str] = dict()
-        # Dictionary	Optional. A dictionary containing custom variables that are specific to this command.
-        self.vars: Dict[str, Any] = dict()
-        # Duration	Optional. The command timeout in seconds. Defaults to 1m.
-        self.timeout: str = ''
-        # Dictionary	Optional. A dictionary of command arguments.
-        self.arguments: Dict[str, str] = dict()
+        # String	Optional. A short description of the time period.
+        self.display_name: str = ''
+        # Dictionary	Required. A dictionary containing information which days and durations apply to this timeperiod.
+        self.ranges: Dict[str, str] = dict()
+        # Boolean	Optional. Whether to prefer timeperiods includes or excludes. Default to true.
+        self.prefer_includes = True
+        # Array of object names	Optional. An array of timeperiods, which should exclude from your timerange.
+        self.excludes: List[str] = list()
+        # Array of object names	Optional. An array of timeperiods, which should include into your timerange
+        self.includes: List[str] = list()
 
         self._ind = {'object_name', 'object_type'}
         self.__initialized = True

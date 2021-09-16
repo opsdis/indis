@@ -20,6 +20,7 @@
 """
 from indis.model.host import Host
 from indis.model.group import Group
+from indis.model.timeperiod import TimePeriod
 
 from indis.provider.source import Source
 import logging
@@ -34,40 +35,41 @@ class NetworkSource(Source):
     # No __init__ method is allowed
 
     def fetch(self) -> Transfer:
+        # Create a transfer object
+        transfer = Transfer()
+
+        # Create a timeperiod template
+        tp = TimePeriod(name='opsdis_workday_tp', object_type='object')
+        tp.display_name = 'Opsdis workhours'
+        tp.ranges['monday'] = '8:00-17:00'
+        tp.ranges['tuesday'] = '8:00-17:00'
+        tp.ranges['wednesday'] = '8:00-17:00'
+        tp.ranges['thursday'] = '8:00-17:00'
+        tp.ranges['friday'] = '8:00-17:00'
+        tp.ranges['saturday'] = '8:00-17:00'
+
+        transfer.timeperiods[tp.object_name] = tp
+
         nodehosts = self.reader.read_hosts()
 
-        transfer = Transfer()
         for host_dict in nodehosts:
-            host = Host(f"{host_dict['node'].lower().strip()}")
+            host = Host(f"{host_dict['name'].lower().strip()}",object_type='template')
 
             # Start add Host attributes
-            if 'address' in host_dict:
-                host.address = host_dict['address'].lower().strip()
-            else:
-                host.address = host_dict['node'].lower().strip()
+            if 'check_command' in host_dict:
+                host.check_command = host_dict['check_command']
 
-            if 'alias' in host_dict:
-                host.display_name = host_dict['alias'].strip()
+            if 'max_check_attempts' in host_dict:
+                host.max_check_attempts = host_dict['max_check_attempts']
 
-            if 'info' in host_dict:
-                host.notes = host_dict['info'].strip()
+            if 'check_period' in host_dict:
+                host.check_period = host_dict['check_period']
 
-            if 'tags' in host_dict:
-                if isinstance(host_dict['tags'], dict):
-                    for key, value in host_dict['tags'].items():
-                        host.vars[key] = value
-            host.vars['web'] = "true"
-            host.notes_url = f"https://{host_dict['node'].lower().strip()}"
+            if 'check_timeout' in host_dict:
+                host.check_period = host_dict['check_timeout']
 
-            if 'groups' in host_dict:
-                for group in host_dict['groups']:
-                    host.groups.append(group)
-                    hostgroup = Group(name=group)
-                    hostgroup.display_name = f"HOSTGROUP {group}"
-                    transfer.hostgroups[hostgroup.object_name] = hostgroup
-
-            host.imports.append('aha_host_template')
             transfer.hosts[host.object_name] = host
+
 
         return transfer
 

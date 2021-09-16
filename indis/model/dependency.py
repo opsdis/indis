@@ -26,8 +26,8 @@ class Dependency(Common):
     __initialized = False
 
     def __init__(self, name: str, parent_host: str, child_host: str):
-        super().__init__(name=name)
-        #self.object_name = name
+        super().__init__(name=name, object_type='object')
+        # self.object_name = name
         # Object name	Required. The parent host.
         self.parent_host_name = parent_host
         # Object name	Optional. The parent service. If omitted, this dependency object is treated as host dependency.

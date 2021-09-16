@@ -20,16 +20,18 @@
 """
 
 from typing import List, Dict, Any
-from indis.model.common import Common, to_json, to_dict
+
+from indis.model.common import Common
+
 
 class BasicAttributes(Common):
     __initialized = False
 
-    def __init__(self, name: str):
-        super().__init__(name=name)
-        #self.object_name = name
+    def __init__(self, name: str, object_type: str):
+        super().__init__(name=name, object_type=object_type)
+        # self.object_name = name
         # String	Optional. A short description of the service.
-        self.display_name = ''
+        self.display_name: str = ''
         # Array of object names	Optional. The service groups this service belongs to.
         self.groups: List[str] = list()
         # Dictionary	Optional. A dictionary containing custom variables that are specific to this service.

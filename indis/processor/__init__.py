@@ -22,10 +22,10 @@ from typing import Dict
 
 from indis.configuration import Configuration
 from indis.processor.common import Processing
-from indis.provider.transfer import Transfer
 # The import of the classes that is subclasses of Processing
 from indis.processor.groups import Groups
 from indis.processor.vars import Vars
+from indis.provider.transfer import Transfer
 
 
 def processing(transfer: Transfer, config: Configuration) -> Dict[str, int]:

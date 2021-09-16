@@ -20,14 +20,14 @@
 """
 
 from indis.model.basic_attributes import BasicAttributes
-from indis.model.common import Common, to_json, to_dict
+from indis.model.common import to_json, to_dict
 
 
 class Host(BasicAttributes):
     __initialized = False
 
-    def __init__(self, name):
-        super().__init__(name=name)
+    def __init__(self, name, object_type: str = 'object'):
+        super().__init__(name=name, object_type=object_type)
 
         # String Optional. The host’s IPv4 address. Available as command runtime macro $address$ if set.
         self.address = None
@@ -43,6 +43,7 @@ class Host(BasicAttributes):
             object.__setattr__(self, name, value)
 
     def to_json(self):
+
         return to_json(self)
 
     def to_dict(self):

@@ -26,9 +26,9 @@ from typing import Dict, Any
 
 class Common:
 
-    def __init__(self, name):
+    def __init__(self, name, object_type: str):
         self.object_name = name
-        self.object_type = 'object'
+        self.object_type = object_type
 
     @abstractmethod
     def to_json(self) -> str:
@@ -40,11 +40,11 @@ class Common:
 
 
 def to_json(obj, initial=None, padding: bool = False) -> str:
-    res = to_dict(initial, obj, padding)
+    res = to_dict(obj, initial, padding)
     return json.dumps(res)
 
 
-def to_dict(initial, obj=None, padding: bool = False) -> Dict[str, Any]:
+def to_dict(obj=None, initial=None, padding: bool = False) -> Dict[str, Any]:
     res = dict()
     for key, value in obj.__dict__.items():
         if key.startswith('_'):

@@ -57,5 +57,5 @@ class JsonFileWriter(OutputWriter):
                     sep = ','
                 print(']', end='')
 
-    def write_stats(self) -> Dict[str, Dict[str, int]]:
+    def write_stats(self) -> Dict[str, Dict[str, Dict[str, int]]]:
         return self.stats

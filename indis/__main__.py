@@ -20,6 +20,7 @@
 """
 
 import argparse
+import json
 import os
 import traceback
 # from cmdb2monitor.cmdbmo import create_monitor
@@ -27,12 +28,12 @@ from distutils.util import strtobool
 from typing import Dict, Tuple
 
 import indis.configuration as conf
+from indis.cache import factory as cache_factory
 from indis.configuration import Configuration
 from indis.logging import Log as log
 from indis.output_factory import Factory as output_factory
 from indis.processor import processing
 from indis.source_factory import Factory as source_factory
-from indis.cache import factory as cache_factory
 
 logger = log(__name__)
 
@@ -60,7 +61,7 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Tuple[Dict[str, in
         logger.info_fmt(processed, f"processed")
 
         # Get cache
-        cache_imp = cache_factory(config=conf.Configuration.get('cache'), transfer=transfer)
+        cache_imp = cache_factory(prefix=source_name, config=conf.Configuration.get('cache'), transfer=transfer)
 
         # Write output
         output.write(transfer=transfer, cache=cache_imp)
@@ -83,6 +84,9 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--source',
                         dest="source_name", help="source provider to run")
 
+    parser.add_argument('-v', '--verbose', default=True,
+                        dest="verbose", help="verbose output of processing")
+
     args = parser.parse_args()
 
     if args.configfile:
@@ -97,8 +101,10 @@ if __name__ == "__main__":
 
     try:
         transfer_stats, ops_stat = execute(source_name=args.source_name, dryrun=dry_run)
-        print(transfer_stats)
-        print(ops_stat)
+        if args.verbose:
+            verbose_output = {'source': transfer_stats, 'processed': ops_stat}
+            print(json.dumps(verbose_output, indent=4, sort_keys=True))
+
     except Exception as err:
         traceback.print_exc()
         print(err)

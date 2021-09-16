@@ -21,18 +21,17 @@
 
 from indis.cache.cache import Cache, RedisCache, NoCache
 from indis.configuration import Configuration
-from indis.provider.transfer import Transfer
 from indis.logging import Log as log
+from indis.provider.transfer import Transfer
 
 logger = log(__name__)
 
 
-def factory(config: Configuration, transfer: Transfer) -> Cache:
-
+def factory(prefix: str, config: Configuration, transfer: Transfer) -> Cache:
     if config:
         if config.get('redis'):
             logger.info_fmt({'cache': 'redis'}, 'Use cache')
-            return RedisCache(transfer, config.get('redis'))
+            return RedisCache(prefix=prefix, transfer=transfer, config=config.get('redis'))
         else:
             logger.info_fmt({'cache': 'NoCache'}, 'Use cache')
             return NoCache(transfer)

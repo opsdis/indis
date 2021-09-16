@@ -4,6 +4,7 @@ from indis.model.host import Host
 from indis.model.service import Service
 from indis.model.group import Group
 from indis.model.dependency import Dependency
+from indis.model.zone import Zone
 
 
 class TestBasicAttributes(unittest.TestCase):
@@ -42,5 +43,15 @@ class TestBasicAttributes(unittest.TestCase):
         dep_host = Dependency(name="mydep", parent_host="host1", child_host="host2")
         dep_host.states.append('Up')
         print(dep_host.to_json())
+
+        self.assertTrue(not False)
+
+    def test_zone(self) -> None:
+        print('zone')
+        zone = Zone(name='foo')
+        zone.is_global = True
+        print(zone.to_json())
+        print(zone.to_dict())
+
 
         self.assertTrue(not False)

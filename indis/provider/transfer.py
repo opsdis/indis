@@ -23,10 +23,15 @@ from typing import Dict, Any, Set
 
 from indis.model.command import Command
 from indis.model.dependency import Dependency
+from indis.model.endpoint import EndPoint
 from indis.model.group import Group
 from indis.model.host import Host
 from indis.model.notification import Notification
 from indis.model.service import Service
+from indis.model.timeperiod import TimePeriod
+from indis.model.user import User
+from indis.model.usergroup import UserGroup
+from indis.model.zone import Zone
 
 
 class Transfer:
@@ -46,8 +51,15 @@ class Transfer:
         self.notifications: Dict[str, Notification] = {}
         self.commands: Dict[str, Command] = {}
 
-        # Set of host name that should be excluded
-        # self.hosts_exclude: Dict[str, Any] = {}
+        self.timeperiods: Dict[str, TimePeriod] = {}
+        self.users: Dict[str, User] = {}
+        self.usergroups: Dict[str, UserGroup] = {}
+
+        self.endpoints: Dict[str, EndPoint] = {}
+        self.zones: Dict[str, Zone] = {}
+
+    # Set of host name that should be excluded
+    # self.hosts_exclude: Dict[str, Any] = {}
 
     def __setattr__(self, key, value):
 
@@ -87,5 +99,5 @@ class Transfer:
         return stats
 
     def dependency_order(self):
-        return ['hostgroups', 'commands', 'hosts', 'servicegroups', 'services', 'service_dependencies',
-                    'host_dependencies', 'notifications']
+        return ['endpoints', 'zones', 'hostgroups', 'commands', 'usergroups', 'users', 'notifications', 'timeperiods',
+                'servicegroups', 'hosts', 'services', 'service_dependencies', 'host_dependencies']

@@ -11,7 +11,7 @@
     "contact_team": "network-demo",
     "alias": "Opsdis",
     "tags": {
-      "customer_id": "ID-74"
+      "customer_id": "ID-744"
     },
     "geopos": {
       "longitude": "18.080976",
@@ -47,7 +47,8 @@
         ]
       }
     ]
-  },
+  }
+,
   {
     "node": "www.sunet.se",
     "info": "Network service check",

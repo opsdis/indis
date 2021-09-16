@@ -19,8 +19,8 @@
 
 """
 
-from indis.processor.common import Processing
 from indis.model.group import Group
+from indis.processor.common import Processing
 
 
 class Groups(Processing):

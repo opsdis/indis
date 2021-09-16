@@ -21,14 +21,14 @@
 
 from indis.model.basic_attributes import BasicAttributes
 
-from indis.model.common import Common, to_json, to_dict
+from indis.model.common import to_json, to_dict
 
 
 class Service(BasicAttributes):
     __initialized = False
 
-    def __init__(self, name: str, host_name: str):
-        super().__init__(name)
+    def __init__(self, name: str, object_type: str = 'object', host_name: str = None):
+        super().__init__(name=name, object_type=object_type)
         # 	Object name	Required. The host this service belongs to. There must be a Host object with that name.
         self.host_name = host_name
 
@@ -43,9 +43,15 @@ class Service(BasicAttributes):
             object.__setattr__(self, name, value)
 
     def to_json(self, padding: bool = False):
-        res = {'host_name': self.host_name}
-        return to_json(self, res)
+        if self.object_type == 'object':
+            res = {'host_name': self.host_name}
+            return to_json(self, res)
+        else:
+            return to_json(self)
 
     def to_dict(self):
-        res = {'host_name': self.host_name}
-        return to_dict(self, res)
+        if self.object_type == 'object':
+            res = {'host_name': self.host_name}
+            return to_dict(self, res)
+        else:
+            return to_dict(self)

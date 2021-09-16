@@ -9,6 +9,11 @@ output:
     user: icingaadmin
     password: icinga
 
+    deploy: true
+    # TODO - If delete should be supported - require that the full population from a source is collected
+    # Require that cache is enabled
+    delete: true
+
 
 source:
   demo_source:
@@ -21,6 +26,17 @@ source:
       reader_inf: demo.reader.Reader
       # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
       reader: demo.file_reader.FileReader
+
+  demo_template:
+    name: demo_host_template
+    class: demo_host_template.source.NetworkSource
+    # This part describe hsource_dataow the data I read by the cmdb module
+    access:
+      # This is mandatory is the class that define the abstract methods that the reader implementation
+      # must implement. The module class should only know about this class.
+      reader_inf: demo_host_template.reader.Reader
+      # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
+      reader: demo_host_template.file_reader.FileReader
 
 processor:
   # Add vars to all and specific object types
@@ -38,16 +54,20 @@ processor:
 
 cache:
   # Use cache to enable life cycle on objects. A must to understand deletes
+  # data will be stored in redis with the prefix of the source name, e.g. "demo_source:"
   redis:
     host: localhost
-    # a key prefix for all keys. One for each provider integrations
-    prefix: "demo:"
+
 
 demo:
 
   # Provider specific attribute used in the provider logic
   nodefile: data/source_data.json
 
+demo_host_template:
+
+  # Provider specific attribute used in the provider logic
+  nodefile: data/host_template.json
 
 logger:
   # Path and name for the log file. Default is stdout

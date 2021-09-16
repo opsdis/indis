@@ -24,7 +24,7 @@ from typing import List, Dict, Any
 from indis.model.common import Common, to_json, to_dict
 
 
-class Command(Common):
+class User(Common):
     """
     Command is the same for CheckCommand, NotificationCommand and EventCommand
     """
@@ -32,20 +32,24 @@ class Command(Common):
 
     def __init__(self, name: str, object_type: str = 'object'):
         super().__init__(name=name, object_type=object_type)
-        # self.object_name = name
-        # Array	Required. The command.: This can either be an array of individual command arguments. Alternatively a
-        # string can be specified in which case the shell interpreter (usually /bin/sh) takes care of parsing the
-        # command.
-        # When using the “arguments” attribute this must be an array. Can be specified as function for advanced implementations.
-        self.command: List[str] = list()
-        # Dictionary	Optional. A dictionary of macros which should be exported as environment variables prior to executing the command.
-        self.env: Dict[str, str] = dict()
-        # Dictionary	Optional. A dictionary containing custom variables that are specific to this command.
+        # String	Optional. A short description of the user.
+        self.display_name: str = ''
+        # String	Optional. An email string for this user. Useful for notification commands.
+        self.email: str = ''
+        # String	Optional. A pager string for this user. Useful for notification commands.
+        self.pager: str = ''
+        # Dictionary	Optional. A dictionary containing custom variables that are specific to this user.
         self.vars: Dict[str, Any] = dict()
-        # Duration	Optional. The command timeout in seconds. Defaults to 1m.
-        self.timeout: str = ''
-        # Dictionary	Optional. A dictionary of command arguments.
-        self.arguments: Dict[str, str] = dict()
+        # Array of object names	Optional. An array of group names.
+        self.groups: List[str] = list()
+        # Boolean	Optional. Whether notifications are enabled for this user. Defaults to true.
+        self.enable_notifications: bool = True
+        # Object name	Optional. The name of a time period which determines when a notification for this user should be triggered. Not set by default (effectively 24x7).
+        self.period: str = ''
+        # Array	Optional. A set of type filters when a notification for this user should be triggered. By default everything is matched. E.g [ Problem, Recovery ]
+        self.types: List[str] = list()
+        # Array	Optional. A set of state filters when a notification for this should be triggered. By default everything is matched. E.g [ OK, Warning, Critical, Unknown ]
+        self.states: List[str] = list()
 
         self._ind = {'object_name', 'object_type'}
         self.__initialized = True

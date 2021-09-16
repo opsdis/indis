@@ -61,6 +61,7 @@ class APIWriter(OutputWriter):
         super().__init__(config)
         self.cache = None
         self.stats_create = {}
+        self.stats_create_template = {}
         self.stats_delete = {}
         self.con = Connection(self.config)
         self.transfer: Transfer = Transfer()
@@ -70,13 +71,23 @@ class APIWriter(OutputWriter):
         self.transfer = transfer
         # Cache the Transfer
         self.cache = cache
+
+        # Write templates
+        for object_type in transfer.dependency_order():
+            if transfer.__dict__[object_type]:
+                # the transfer object is not empty
+                self.stats_create_template.update(self._write_template(object_type=object_type))
+
+        logger.debug_fmt(log_kv=self.stats_create, message="api create/update template operations")
+
+        # Write object - real
         # Must be written in a order
         for object_type in transfer.dependency_order():
             if transfer.__dict__[object_type]:
                 # the transfer object is not empty
                 self.stats_create.update(self._write_object(object_type=object_type))
 
-        logger.debug_fmt(log_kv=self.stats_create, message="api create/update operations")
+        logger.debug_fmt(log_kv=self.stats_create, message="api create/update object operations")
 
         # Handling delete objects
         for object_type in transfer.__dict__.keys():
@@ -84,28 +95,55 @@ class APIWriter(OutputWriter):
 
             self.stats_delete.update(self._delete_object(object_type=object_type, objects=deleted))
 
-        logger.debug_fmt(log_kv=self.stats_delete, message="api delete operations")
+        logger.debug_fmt(log_kv=self.stats_delete, message="api delete object operations")
 
-    def write_stats(self) -> Dict[str, Dict[str, int]]:
+        if self.config.get('deploy'):
+            self.deploy()
+
+    def write_stats(self) -> Dict[str, Dict[str, Dict[str, int]]]:
         stats = dict()
+        stats['object'] = {}
         for object_type in self.transfer.__dict__.keys():
 
-            stats[object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0}
+            stats['object'][object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0}
             if object_type in self.stats_create:
                 for key, value in self.stats_create[object_type].items():
-                    stats[object_type][value] += 1
+                    stats['object'][object_type][value] += 1
                 for key, value in self.stats_delete[object_type].items():
-                    stats[object_type][value] += 1
+                    stats['object'][object_type][value] += 1
+
+        stats['template'] = {}
+        for object_type in self.transfer.__dict__.keys():
+
+            stats['template'][object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0}
+            if object_type in self.stats_create_template:
+                for key, value in self.stats_create_template[object_type].items():
+                    stats['template'][object_type][value] += 1
+                for key, value in self.stats_delete[object_type].items():
+                    stats['template'][object_type][value] += 1
+
+        return stats
+
+    def _write_template(self, object_type: str) -> Dict[str, Dict[str, str]]:
+        stats = {object_type: dict()}
+
+        for key, value in self.transfer.get_copy()[object_type].items():
+            if value.object_type == 'template':
+                status = self.con.create_object(object_name=value.object_name, object_type=object_type,
+                                                body=value.to_json())
+                stats[object_type][value.object_name] = map_write_status(status)
+
         return stats
 
     def _write_object(self, object_type: str) -> Dict[str, Dict[str, str]]:
         stats = {object_type: dict()}
 
         for key, value in self.transfer.get_copy()[object_type].items():
-            status = self.con.create_object(object_name=value.object_name, object_type=object_type,
-                                            body=value.to_json())
+            if value.object_type == 'object':
+                status = self.con.create_object(object_name=value.object_name, object_type=object_type,
+                                                body=value.to_json())
+                stats[object_type][value.object_name] = map_write_status(status)
 
-            stats[object_type][value.object_name] = map_write_status(status)
         return stats
 
     def _delete_object(self, object_type: str, objects: Set[str]) -> Dict[str, Dict[str, str]]:
@@ -115,6 +153,9 @@ class APIWriter(OutputWriter):
             status = self.con.delete_object(object_name=object_name, object_type=object_type)
             stats[object_type][object_name] = map_delete_status(status)
         return stats
+
+    def deploy(self):
+        self.con.deploy()
 
 
 class Connection:
@@ -153,7 +194,7 @@ class Connection:
                                   verify=self.verify)
 
                 status = r.status_code
-                no_error = True
+                # no_error = True
 
             if r.status_code == 200 or r.status_code == 201:
                 status = r.status_code
@@ -212,6 +253,40 @@ class Connection:
         finally:
             logger.info_timer('delete', object_type, object_name, time.time() - start_time, status)
 
+    def deploy(self) -> int:
+
+        no_error = False
+        start_time = time.time()
+        status = None
+
+        try:
+
+            r = requests.post(f"{self.url}/config/deploy",
+                              auth=self.auth,
+                              headers=self.headers,
+                              verify=self.verify)
+
+            if r.status_code == 200 or r.status_code == 201:
+                status = r.status_code
+
+            if not no_error:
+                r.raise_for_status()
+
+            return r.status_code
+
+        except requests.exceptions.HTTPError as err:
+            logger.warn("get failed on: {} err {}".format('config/deployments', err))
+            if r is None:
+                raise err
+
+            return r.status_code
+
+        except requests.exceptions.RequestException as err:
+            logger.error("get failed on: {} err {}".format(self.url, err))
+            raise err
+        finally:
+            logger.info_timer('post', "config/deploy", "", time.time() - start_time, status)
+
     def get_url(self, object_type):
         type = ''
         if object_type == 'hosts':
@@ -226,4 +301,14 @@ class Connection:
             type = 'command'
         if object_type == 'notifications':
             type = 'notification'
+        if object_type == 'timeperiods':
+            type = 'timeperiod'
+        if object_type == 'users':
+            type = 'user'
+        if object_type == 'usergroups':
+            type = 'usergroup'
+        if object_type == 'endpoints':
+            type = 'endpoint'
+        if object_type == 'zones':
+            type = 'zone'
         return type

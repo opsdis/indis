@@ -19,12 +19,10 @@
 
 """
 
-from typing import List, Dict, Any
-
 from indis.model.common import Common, to_json, to_dict
 
 
-class Command(Common):
+class EndPoint(Common):
     """
     Command is the same for CheckCommand, NotificationCommand and EventCommand
     """
@@ -32,20 +30,14 @@ class Command(Common):
 
     def __init__(self, name: str, object_type: str = 'object'):
         super().__init__(name=name, object_type=object_type)
-        # self.object_name = name
-        # Array	Required. The command.: This can either be an array of individual command arguments. Alternatively a
-        # string can be specified in which case the shell interpreter (usually /bin/sh) takes care of parsing the
-        # command.
-        # When using the “arguments” attribute this must be an array. Can be specified as function for advanced implementations.
-        self.command: List[str] = list()
-        # Dictionary	Optional. A dictionary of macros which should be exported as environment variables prior to executing the command.
-        self.env: Dict[str, str] = dict()
-        # Dictionary	Optional. A dictionary containing custom variables that are specific to this command.
-        self.vars: Dict[str, Any] = dict()
-        # Duration	Optional. The command timeout in seconds. Defaults to 1m.
-        self.timeout: str = ''
-        # Dictionary	Optional. A dictionary of command arguments.
-        self.arguments: Dict[str, str] = dict()
+        # String	Optional. The hostname/IP address of the remote Icinga 2 instance.
+        self.host: str = ''
+        # Number	Optional. The service name/port of the remote Icinga 2 instance. Defaults to 5665.
+        self.port: int = 5565
+        # Duration	Optional. Duration for keeping replay logs on connection loss. Defaults to 1d (86400 seconds).
+        # Attribute is specified in seconds. If log_duration is set to 0, replaying logs is disabled. You could also
+        # specify the value in human readable format like 10m for 10 minutes or 1h for one hour.
+        self.log_duration: str = '1d'
 
         self._ind = {'object_name', 'object_type'}
         self.__initialized = True
