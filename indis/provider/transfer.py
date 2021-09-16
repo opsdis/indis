@@ -22,12 +22,13 @@
 from typing import Dict, Any, Set
 
 from indis.model.command import Command
-from indis.model.dependency import Dependency
 from indis.model.endpoint import EndPoint
 from indis.model.group import Group
 from indis.model.host import Host
+from indis.model.host_dependency import HostDependency
 from indis.model.notification import Notification
 from indis.model.service import Service
+from indis.model.service_dependency import ServiceDependency
 from indis.model.timeperiod import TimePeriod
 from indis.model.user import User
 from indis.model.usergroup import UserGroup
@@ -45,8 +46,8 @@ class Transfer:
         self.hostgroups: Dict[str, Group] = {}
         self.servicegroups: Dict[str, Group] = {}
 
-        self.service_dependencies: Dict[str, Dependency] = {}
-        self.host_dependencies: Dict[str, Dependency] = {}
+        self.host_dependencies: Dict[str, HostDependency] = {}
+        self.service_dependencies: Dict[str, ServiceDependency] = {}
 
         self.notifications: Dict[str, Notification] = {}
         self.commands: Dict[str, Command] = {}
