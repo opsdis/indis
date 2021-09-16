@@ -299,6 +299,8 @@ class Connection:
             type = 'servicegroup'
         if object_type == 'commands':
             type = 'command'
+        if object_type == 'eventcommands':
+            type = 'eventcommand'
         if object_type == 'notifications':
             type = 'notification'
         if object_type == 'timeperiods':

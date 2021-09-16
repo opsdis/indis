@@ -50,6 +50,7 @@ class Transfer:
 
         self.notifications: Dict[str, Notification] = {}
         self.commands: Dict[str, Command] = {}
+        self.eventcommands: Dict[str, Command] = {}
 
         self.timeperiods: Dict[str, TimePeriod] = {}
         self.users: Dict[str, User] = {}
@@ -99,5 +100,5 @@ class Transfer:
         return stats
 
     def dependency_order(self):
-        return ['endpoints', 'zones', 'hostgroups', 'commands', 'usergroups', 'users', 'notifications', 'timeperiods',
-                'servicegroups', 'hosts', 'services', 'service_dependencies', 'host_dependencies']
+        return ['endpoints', 'zones', 'hostgroups', 'commands', 'eventcommands', 'usergroups', 'users', 'notifications', 'timeperiods',
+                'servicegroups', 'hosts', 'services', 'host_dependencies', 'service_dependencies']
