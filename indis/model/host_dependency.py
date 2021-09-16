@@ -19,7 +19,6 @@
 
 """
 
-from indis.model.common import Common, to_json, to_dict
 from indis.model.dependency import Dependency
 
 
