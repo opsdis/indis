@@ -8,10 +8,10 @@ output:
     url: http://172.25.1.64/icingaweb2/director
     user: icingaadmin
     password: icinga
-
+    # Automatically do a deploy after all create, changes and deletes is done, default false
     deploy: true
-    # TODO - If delete should be supported - require that the full population from a source is collected
-    # Require that cache is enabled
+    # If delete is used it's a MUST that a full population from a source is collected from the source
+    # Require that cache is enabled, default false
     delete: true
 
 
@@ -54,7 +54,8 @@ processor:
 
 cache:
   # Use cache to enable life cycle on objects. A must to understand deletes
-  # data will be stored in redis with the prefix of the source name, e.g. "demo_source:"
+  # data will be stored in redis with the prefix of the source name, e.g. "demo_source:", as a way to separate between
+  # different sources
   redis:
     host: localhost
 
