@@ -18,6 +18,7 @@
     along with indis.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+import json
 import time
 from typing import Dict, Set
 
@@ -105,7 +106,7 @@ class APIWriter(OutputWriter):
         stats['object'] = {}
         for object_type in self.transfer.__dict__.keys():
 
-            stats['object'][object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0}
+            stats['object'][object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0, UNKNOWN: 0}
             if object_type in self.stats_create:
                 for key, value in self.stats_create[object_type].items():
                     stats['object'][object_type][value] += 1
@@ -115,7 +116,7 @@ class APIWriter(OutputWriter):
         stats['template'] = {}
         for object_type in self.transfer.__dict__.keys():
 
-            stats['template'][object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0}
+            stats['template'][object_type] = {UPDATED: 0, CREATED: 0, DELETED: 0, NOTMODIFIED: 0, UNKNOWN: 0}
             if object_type in self.stats_create_template:
                 for key, value in self.stats_create_template[object_type].items():
                     stats['template'][object_type][value] += 1
@@ -173,13 +174,20 @@ class Connection:
 
         type = self.get_url(object_type)
 
+        url_postfix = ''
+        # service special
+        if type == "service":
+            bd = json.loads(body)
+            host = bd['host']
+            url_postfix = f"&host={host}"
+
         no_error = False
         start_time = time.time()
         status = None
 
         try:
             # Do PUT first - if the object exists it will be updated
-            r = requests.put(f"{self.url}/{type}?name={object_name}",
+            r = requests.put(f"{self.url}/{type}?name={object_name}{url_postfix}",
                              data=body,
                              auth=self.auth,
                              headers=self.headers,
