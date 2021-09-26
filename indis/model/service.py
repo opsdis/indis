@@ -30,8 +30,8 @@ class Service(BasicAttributes):
     def __init__(self, name: str, object_type: str = 'object', host_name: str = None):
         super().__init__(name=name, object_type=object_type)
         # 	Object name	Required. The host this service belongs to. There must be a Host object with that name.
-        self.host_name = host_name
-
+        self.host = host_name
+        #self.object_name = f"{self.host};{self.object_name}"
         self.__initialized = True
 
     def __setattr__(self, name, value):
@@ -44,14 +44,14 @@ class Service(BasicAttributes):
 
     def to_json(self, padding: bool = False):
         if self.object_type == 'object':
-            res = {'host_name': self.host_name}
+            res = {'host': self.host}
             return to_json(self, res)
         else:
             return to_json(self)
 
     def to_dict(self):
         if self.object_type == 'object':
-            res = {'host_name': self.host_name}
+            res = {'host': self.host}
             return to_dict(self, res)
         else:
             return to_dict(self)
