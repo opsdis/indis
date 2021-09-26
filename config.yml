@@ -5,7 +5,7 @@ output:
 
   writer: indis.output.api_writer.APIWriter
   configuration:
-    url: http://172.25.1.64/icingaweb2/director
+    url: http://localhost:8888/icingaweb2/director
     user: icingaadmin
     password: icinga
     # Automatically do a deploy after all create, changes and deletes is done, default false
