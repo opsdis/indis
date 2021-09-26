@@ -84,7 +84,7 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--source',
                         dest="source_name", help="source provider to run")
 
-    parser.add_argument('-v', '--verbose', default=True,
+    parser.add_argument('-v', '--verbose', action="store_true",
                         dest="verbose", help="verbose output of processing")
 
     args = parser.parse_args()
