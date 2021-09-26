@@ -1,9 +1,11 @@
 import unittest
 
 from indis.model.host import Host
+from indis.model.host_dependency import HostDependency
 from indis.model.service import Service
 from indis.model.group import Group
 from indis.model.dependency import Dependency
+from indis.model.service_dependency import ServiceDependency
 from indis.model.zone import Zone
 
 
@@ -43,6 +45,22 @@ class TestBasicAttributes(unittest.TestCase):
         dep_host = Dependency(name="mydep", parent_host="host1", child_host="host2")
         dep_host.states.append('Up')
         print(dep_host.to_json())
+
+        self.assertTrue(not False)
+
+    def test_host_dependency(self) -> None:
+        print('HostDependency')
+        dep_host = HostDependency(name="myhostdep", parent_host="host1", child_host="host2")
+        dep_host.states.append('Up')
+        print(dep_host.to_json())
+
+        self.assertTrue(not False)
+
+    def test_service_dependency(self) -> None:
+        print('ServiceDependency')
+        dep_service = ServiceDependency(name="myservicedep", parent_host="host1", child_host="host2", parent_service='foo', child_service='bar')
+        dep_service.states.append('Down')
+        print(dep_service.to_json())
 
         self.assertTrue(not False)
 
