@@ -23,6 +23,7 @@ from indis.model.basic_attributes import BasicAttributes
 
 from indis.model.common import to_json, to_dict
 
+HOST_SERVICE_SEPARATOR = '_'
 
 class Service(BasicAttributes):
     __initialized = False
@@ -31,8 +32,10 @@ class Service(BasicAttributes):
         super().__init__(name=name, object_type=object_type)
         # 	Object name	Required. The host this service belongs to. There must be a Host object with that name.
         self.host = host_name
-        #self.object_name = f"{self.host};{self.object_name}"
+
+        self.object_name = f"{self.host}{HOST_SERVICE_SEPARATOR}{name}"
         self.__initialized = True
+        self.display_name = name
 
     def __setattr__(self, name, value):
         if self.__initialized:

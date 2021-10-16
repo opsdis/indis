@@ -27,6 +27,7 @@ import requests
 from indis.cache import Cache
 from indis.configuration import Configuration
 from indis.logging import Log as log
+from indis.model.service import HOST_SERVICE_SEPARATOR
 from indis.output.output_writer import OutputWriter
 from indis.provider.transfer import Transfer
 
@@ -178,8 +179,9 @@ class Connection:
         # service special
         if type == "service":
             bd = json.loads(body)
-            host = bd['host']
-            url_postfix = f"&host={host}"
+            if 'host' in bd:
+                host = bd['host']
+                url_postfix = f"&host={host}"
 
         no_error = False
         start_time = time.time()
@@ -228,6 +230,12 @@ class Connection:
 
     def delete_object(self, object_name: str, object_type: str) -> int:
         type = self.get_url(object_type)
+        url_postfix = ''
+        # service special
+        if type == "service":
+            object_name_array = object_name.split(HOST_SERVICE_SEPARATOR)
+            #object_name = object_name_array[1]
+            url_postfix = f"&host={object_name_array[0]}"
 
         no_error = False
         start_time = time.time()
@@ -235,7 +243,7 @@ class Connection:
 
         try:
 
-            r = requests.delete(f"{self.url}/{type}?name={object_name}",
+            r = requests.delete(f"{self.url}/{type}?name={object_name}{url_postfix}",
                                 auth=self.auth,
                                 headers=self.headers,
                                 verify=self.verify)
