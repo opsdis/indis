@@ -1,7 +1,8 @@
 indis - Icinga native director import service
 ----------------------------------------------
 
-> This project is currently in alpha
+> This project is currently in beta so API's and functionallity may change. Looking forward to your feedback and pull
+> requests.
 
 # Overview 
 
@@ -26,6 +27,9 @@ Instead of writing different rules and configuration depending on the structure 
 separation and abstraction.
 
 **That's why we call it "Icinga native director import service".**
+
+Using Indis it simple to automate Icinga2 configuration with different systems, including gitops driven CI/CD 
+pipelines. All the benefits of Icinga director, Icinga DSL and with the power of Python.
 
 > Currently, Indis do not support configuration and management of apply rules. Existing apply rules in Icinga2 
 > will of course be executed if matched.
