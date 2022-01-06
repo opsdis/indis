@@ -1,14 +1,19 @@
 output:
-#  writer: indis.output.json_writer.JsonFileWriter
-#  configuration:
-#    directory: /tmp/director
+  # Specify the output writer to use
 
+  # Use the json file writer
+  #  writer: indis.output.json_writer.JsonFileWriter
+  #  configuration:
+  #    directory: /tmp/director
+
+  # Use the API writer
   writer: indis.output.api_writer.APIWriter
+  # Configuration for API writer
   configuration:
-    url: http://localhost:8888/icingaweb2/director
+    url: http://172.25.1.64/icingaweb2/director
     user: icingaadmin
     password: icinga
-    # Automatically do a deploy after all create, changes and deletes is done, default false
+    # Automatically do a deployment after all create, changes and deletes is done, default false
     deploy: true
     # If delete is used it's a MUST that a full population from a source is collected from the source
     # Require that cache is enabled, default false
@@ -16,13 +21,14 @@ output:
 
 
 source:
+  # Specify the source system provider
   demo_source:
     name: demo
     class: demo.source.NetworkSource
-    # This part describe how the data I read by the cmdb module
+    # This part describe how the data read by the cmdb module
     access:
-      # This is mandatory is the class that define the abstract methods that the reader implementation
-      # must implement. The module class should only know about this class.
+      # This is mandatory. The class that define the abstract methods that the reader implementation must implement.
+      # The module class should only know about this class.
       reader_inf: demo.reader.Reader
       # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
       reader: demo.file_reader.FileReader
@@ -30,31 +36,38 @@ source:
   demo_template:
     name: demo_host_template
     class: demo_host_template.source.NetworkSource
-    # This part describe hsource_dataow the data I read by the cmdb module
+    # This part describe how the data read by the cmdb module
     access:
-      # This is mandatory is the class that define the abstract methods that the reader implementation
-      # must implement. The module class should only know about this class.
+      # This is mandatory. The class that define the abstract methods that the reader implementation must implement.
+      # The module class should only know about this class.
       reader_inf: demo_host_template.reader.Reader
       # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
       reader: demo_host_template.file_reader.FileReader
 
 processor:
+  # Specify different automated processing steps
+
   # Add vars to all and specific object types
   vars:
+    # Add vars to both hosts and services
     common:
       env: Sthlm
+    # Add vars just to hosts
     hosts:
       template: base_host
+    # Add vars jist to services
     services:
       dc: dc1
 
+  # Add groups to object of host and service
   groups:
+    # Add groups to hosts
     hosts:
       - all_host_group
 
 cache:
-  # Use cache to enable life cycle on objects. A must to understand deletes
-  # data will be stored in redis with the prefix of the source name, e.g. "demo_source:", as a way to separate between
+  # Use cache to enable life cycle on objects. A must to understand deletes.
+  # Data will be stored in redis with the prefix of the source name, e.g. "demo_source:", as a way to separate between
   # different sources
   redis:
     host: localhost
