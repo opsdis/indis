@@ -64,9 +64,10 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Tuple[Dict[str, in
         # Get cache
         cache_imp = cache_factory(prefix=source_name, config=conf.Configuration.get('cache'), transfer=transfer)
 
-        # apply rules
+        # Apply rules - TODO
         con = Connection(conf.Configuration.get('output').get('configuration'))
         con.read_apply_rules()
+
         # Write output
         output.write(transfer=transfer, cache=cache_imp)
         logger.info("output executed")
