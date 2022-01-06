@@ -83,6 +83,35 @@ The user must be an existing icinga2 web user with credentials for Director API.
 
 # Source provider
 
+A source provider is implemented as a class that must inherit the Source class.
+
+```pyhton
+class Source:
+
+    def __init__(self, config: Configuration, reader: SourceReader):
+        self.config = config
+        self.reader = reader
+
+    @abstractmethod
+    def fetch(self) -> Transfer:
+        pass
+```
+The field `config` give access to all source specific config in the named source section of the yaml configuration 
+file. The `reader` field give access to the provider specific reader object that indis creates.
+
+The provider reader class must implement the SourceReader.
+
+```python
+class SourceReader:
+
+    def __init__(self, config: Configuration):
+        """
+        Cofiguration is the section of source
+        :param config:
+        """
+        self.config = config
+```
+ 
 Please see the example code in the `demo` directory.
 
 > If you know Mender, you will recognize the programming structure of Indis providers.
