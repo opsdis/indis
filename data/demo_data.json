@@ -1,0 +1,44 @@
+[
+  {
+    "node": "www.sunet.se",
+    "info": "Network service check",
+
+    "groups": [
+      "world-network",
+      "sweden-network"
+    ],
+    "contact_team": "network-demo",
+    "alias": "Sunet",
+    "tags": {
+      "customer_id": "ID-75"
+    },
+    "geopos": {
+      "longitude": "18.080976",
+      "latitude": "59.309914"
+    },
+    "environment": "production",
+    "deployed": "yes",
+    "tcp_protocols": [{"protocol":"https", "port": 443}, {"protocol":"http", "port": 80}]
+  },
+  {
+    "node": "www.google.com",
+    "info": "Network service check",
+
+    "groups": [
+      "world-network",
+      "us-network"
+    ],
+    "contact_team": "network-demo",
+    "alias": "Google",
+    "tags": {
+      "customer_id": "ID-76"
+    },
+    "geopos": {
+      "longitude": "18.080976",
+      "latitude": "59.309914"
+    },
+    "environment": "production",
+    "deployed": "yes",
+    "tcp_protocols": [{"protocol":"https", "port": 443}, {"protocol":"http", "port": 80}]
+  }
+]

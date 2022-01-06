@@ -31,3 +31,6 @@ class Reader(SourceReader):
     def read_hosts(self) -> list:
         pass
 
+    @abstractmethod
+    def read_templates(self) -> list:
+        pass

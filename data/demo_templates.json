@@ -1,0 +1,34 @@
+[
+  {
+    "type": "host",
+    "name": "demo_host_template",
+    "check_command": "ping4",
+    "max_check_attempts": 5,
+    "check_period": "demo_workday",
+    "check_timeout": 0,
+    "check_interval": "1m",
+    "retry_interval": 0,
+    "enable_notifications": true,
+    "enable_active_checks": true,
+    "enable_passive_checks": true,
+    "enable_event_handler": true,
+    "enable_flapping": false,
+    "enable_perfdata": true
+  },
+  {
+    "type": "service",
+    "name": "demo_tcp_service_template",
+    "check_command": "tcp",
+    "max_check_attempts": 5,
+    "check_period": "demo_workday",
+    "check_timeout": 0,
+    "check_interval": "1m",
+    "retry_interval": 0,
+    "enable_notifications": true,
+    "enable_active_checks": true,
+    "enable_passive_checks": true,
+    "enable_event_handler": true,
+    "enable_flapping": false,
+    "enable_perfdata": true
+  }
+]

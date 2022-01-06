@@ -34,17 +34,6 @@ source:
       # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
       reader: demo.file_reader.FileReader
 
-  demo_template:
-    name: demo_host_template
-    class: demo_host_template.source.NetworkSource
-    # This part describe how the data read by the cmdb module
-    access:
-      # This is mandatory. The class that define the abstract methods that the reader implementation must implement.
-      # The module class should only know about this class.
-      reader_inf: demo_host_template.reader.Reader
-      # This defines the real implementation. This is not mandatory, but than be supplied in runtime.
-      reader: demo_host_template.file_reader.FileReader
-
 processor:
   # Specify different automated processing steps
 
@@ -81,14 +70,9 @@ cache:
 
 
 demo:
-
   # Provider specific attribute used in the provider logic
-  nodefile: data/source_data.json
-
-demo_host_template:
-
-  # Provider specific attribute used in the provider logic
-  nodefile: data/host_template.json
+  demo_file: data/demo_data.json
+  demo_template_file: data/demo_templates.json
 
 logger:
   # Path and name for the log file. Default is stdout

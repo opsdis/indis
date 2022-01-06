@@ -27,11 +27,16 @@ import json
 
 class FileReader(Reader):
 
-    # Implement Reader.read_hosts()
-    def read_hosts(self) -> list:
-        return self.get_content(self.config.get('nodefile'))
+    # Implement Reader.read_hosts method
 
-    def get_content(self, file_name: str) -> list:
+    def read_hosts(self) -> list:
+        return FileReader.get_content(self.config.get('demo_file'))
+
+    def read_templates(self) -> list:
+        return FileReader.get_content(self.config.get('demo_template_file'))
+
+    @staticmethod
+    def get_content(file_name: str) -> list:
         with open(file_name) as file:
             content = file.read()
             return json.loads(content)
