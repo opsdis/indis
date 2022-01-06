@@ -171,6 +171,19 @@ class Connection:
         self.verify = False
         self.retries = 5
 
+    def read_apply_rules(self):
+        """
+        Read apply rules
+        TODO
+        :return:
+        """
+        r = requests.get(f"{self.url}/serviceapplyrules",
+                         auth=self.auth,
+                         headers=self.headers,
+                         verify=self.verify)
+        # print(r)
+        pass
+
     def create_object(self, object_name: str, object_type: str, body: str) -> int:
 
         type = self.get_url(object_type)
@@ -234,7 +247,7 @@ class Connection:
         # service special
         if type == "service":
             object_name_array = object_name.split(HOST_SERVICE_SEPARATOR)
-            #object_name = object_name_array[1]
+            # object_name = object_name_array[1]
             url_postfix = f"&host={object_name_array[0]}"
 
         no_error = False

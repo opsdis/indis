@@ -31,6 +31,7 @@ import indis.configuration as conf
 from indis.cache import factory as cache_factory
 from indis.configuration import Configuration
 from indis.logging import Log as log
+from indis.output.api_writer import Connection
 from indis.output_factory import Factory as output_factory
 from indis.processor import processing
 from indis.source_factory import Factory as source_factory
@@ -63,6 +64,9 @@ def execute(source_name, dryrun: bool, source_reader=None) -> Tuple[Dict[str, in
         # Get cache
         cache_imp = cache_factory(prefix=source_name, config=conf.Configuration.get('cache'), transfer=transfer)
 
+        # apply rules
+        con = Connection(conf.Configuration.get('output').get('configuration'))
+        con.read_apply_rules()
         # Write output
         output.write(transfer=transfer, cache=cache_imp)
         logger.info("output executed")

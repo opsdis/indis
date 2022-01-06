@@ -25,21 +25,23 @@ from indis.model.common import to_json, to_dict
 
 HOST_SERVICE_SEPARATOR = '_'
 
+
 class Service(BasicAttributes):
     __initialized = False
 
     def __init__(self, name: str, object_type: str = 'object', host_name: str = None):
         super().__init__(name=name, object_type=object_type)
         # 	Object name	Required. The host this service belongs to. There must be a Host object with that name.
-        self.host = host_name
-
-        self.object_name = f"{self.host}{HOST_SERVICE_SEPARATOR}{name}"
+        if object_type == 'object':
+            self.host = host_name
+            self.object_name = f"{self.host}{HOST_SERVICE_SEPARATOR}{name}"
+        else:
+            self.object_name = f"{name}"
         self.__initialized = True
         self.display_name = name
 
     def __setattr__(self, name, value):
         if self.__initialized:
-            # your __setattr__ implementation here
             self._ind.add(name)
             object.__setattr__(self, name, value)
         else:
