@@ -36,6 +36,7 @@ class Service(BasicAttributes):
             self.host = host_name
             self.object_name = f"{self.host}{HOST_SERVICE_SEPARATOR}{name}"
         else:
+            # Is a template
             self.object_name = f"{name}"
         self.__initialized = True
         self.display_name = name
