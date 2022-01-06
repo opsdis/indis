@@ -15,8 +15,9 @@ output:
     password: icinga
     # Automatically do a deployment after all create, changes and deletes is done, default false
     deploy: true
-    # If delete is used it's a MUST that a full population from a source is collected from the source
-    # Require that cache is enabled, default false
+    # If delete is used it's a MUST that a full extraction is done from the source system to match what is deleted
+    # compare to what's currently in the Indis cache, default false.
+    # Delete set to true require that cache is enabled
     delete: true
 
 
@@ -66,11 +67,17 @@ processor:
       - all_host_group
 
 cache:
-  # Use cache to enable life cycle on objects. A must to understand deletes.
-  # Data will be stored in redis with the prefix of the source name, e.g. "demo_source:", as a way to separate between
-  # different sources
+  # Use cache to enable life cycle on objects. A MUST to understand deletes.
+  # if cache is not used Indis will do API calls for all objects. Using a cache will minimize the amount of API calls
+  # only to object that are changed or delete since last run of Indis.
   redis:
+    # Data will be stored in redis with the prefix of the source name, e.g. "demo_source:", as a way to separate between
+    # different sources.
+    # Below are default values
     host: localhost
+    port: 6379
+    db: 0
+    auth: null
 
 
 demo:
