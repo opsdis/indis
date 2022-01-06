@@ -74,20 +74,16 @@ class APIWriter(OutputWriter):
         # Cache the Transfer
         self.cache = cache
 
-        # Write templates
+        # Write templates an objects in the correct dependency order
         for object_type in transfer.dependency_order():
             if transfer.__dict__[object_type]:
                 # the transfer object is not empty
+                # Create templates
                 self.stats_create_template.update(self._write_template(object_type=object_type))
+                # Create objects
+                self.stats_create.update(self._write_object(object_type=object_type))
 
         logger.debug_fmt(log_kv=self.stats_create, message="api create/update template operations")
-
-        # Write object - real
-        # Must be written in a order
-        for object_type in transfer.dependency_order():
-            if transfer.__dict__[object_type]:
-                # the transfer object is not empty
-                self.stats_create.update(self._write_object(object_type=object_type))
 
         logger.debug_fmt(log_kv=self.stats_create, message="api create/update object operations")
 
