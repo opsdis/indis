@@ -1,3 +1,7 @@
+# This is an example configuration file.
+# It works with the demo in located in the demo directory
+# Make sure to change the url, user and password attributes in the output section
+
 output:
   # Specify the output writer to use
 
