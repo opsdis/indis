@@ -75,8 +75,8 @@ cache:
 
 demo:
   # Provider specific attribute used in the provider logic
-  demo_file: data/demo_data.json
-  demo_template_file: data/demo_templates.json
+  demo_file: demo_data/demo_hosts.json
+  demo_template_file: demo_data/demo_templates.json
 
 logger:
   # Path and name for the log file. Default is stdout
