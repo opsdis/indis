@@ -21,3 +21,5 @@ sonar-project.properties
 .DS_Store
 *.iml
 RELEASE-VERSION
+dist/
+build/
