@@ -1,4 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/indis.svg)](https://badge.fury.io/py/indis)
+
 indis - Icinga native director import service
 ----------------------------------------------
 
