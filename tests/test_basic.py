@@ -71,5 +71,8 @@ class TestBasicAttributes(unittest.TestCase):
         print(zone.to_json())
         print(zone.to_dict())
 
-
         self.assertTrue(not False)
+
+
+if __name__ == '__main__':
+    unittest.main()
