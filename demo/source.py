@@ -133,11 +133,12 @@ class NetworkSource(Source):
     def create_timeperiod(self, transfer):
         tp = TimePeriod(name='demo_workday', object_type='object')
         tp.display_name = 'Demo workhours'
-        tp.ranges['monday'] = '8:00-17:00'
-        tp.ranges['tuesday'] = '8:00-17:00'
-        tp.ranges['wednesday'] = '8:00-17:00'
-        tp.ranges['thursday'] = '8:00-17:00'
-        tp.ranges['friday'] = '1:00-17:00'
+        tp.ranges['monday'] = '8:00-20:00'
+        tp.ranges['tuesday'] = '8:00-20:00'
+        tp.ranges['wednesday'] = '8:00-20:00'
+        tp.ranges['thursday'] = '8:00-20:00'
+        tp.ranges['friday'] = '8:00-20:00'
         tp.ranges['saturday'] = '8:00-17:00'
+        tp.ranges['sunday'] = '8:00-17:00'
 
         transfer.timeperiods[tp.object_name] = tp
